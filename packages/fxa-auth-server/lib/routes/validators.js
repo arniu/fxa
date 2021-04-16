@@ -384,15 +384,33 @@ module.exports.subscriptionsSubscriptionListValidator = isA.object({
 // - metadata can contain arbitrary keys that we don't expect (e.g. used by other systems)
 // - but we can make a good effort at validating what we expect to see when we see it
 module.exports.subscriptionPlanMetadataValidator = isA.object().unknown(true);
+
+const capabilitiesClientIdPattern = /^capabilities/;
+const legalResourceDomainPattern = /^https:\/\/accounts-static\.cdn\.mozilla\.net\/legal\/(.*)/;
+
 module.exports.subscriptionProductMetadataValidator = isA
   .object({
+    iconURL: isA.string().uri().required(),
+    upgradeCTA: isA.string().optional(),
+    downloadURL: isA.string().uri().required(),
+    appStoreLink: isA.string().uri().optional(),
+    playStoreLink: isA.string().uri().optional(),
+    'product:privacyNoticeURL': isA.string().uri().required(),
+    'product:termsOfServiceURL': isA.string().uri().required(),
+    'product:termsOfServiceDownloadURL': isA
+      .string()
+      .regex(legalResourceDomainPattern)
+      .required(),
+    'product:privacyNoticeDownloadURL': isA
+      .string()
+      .regex(legalResourceDomainPattern)
+      .required(),
     productSet: isA.string().optional(),
     productOrder: isA.number().optional(),
-    iconURL: isA.string().optional(),
-    upgradeCTA: isA.string().optional(),
-    downloadURL: isA.string().optional(),
-    appStoreLink: isA.string().optional(),
-    playStoreLink: isA.string().optional(),
+  })
+  .with('productOrder', 'productSet')
+  .pattern(capabilitiesClientIdPattern, isA.string().required(), {
+    fallthrough: true,
   })
   .unknown(true);
 
