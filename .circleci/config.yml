@@ -260,6 +260,19 @@ jobs:
       - store_test_results:
           path: artifacts/tests
 
+  playwright-functional-tests:
+    resource_class: medium
+    docker:
+      - image: mozilla/fxa-circleci
+    steps:
+      - base-install:
+          package: fxa-settings
+      - run:
+          name: Running playwright tests
+          command: ./packages/fxa-settings/scripts/playwright-tests.sh
+      - store_artifacts:
+          path: artifacts
+
   build-and-deploy-storybooks:
     resource_class: small
     docker:
