@@ -9,7 +9,7 @@ const { assert } = require('chai');
 const validators = require('../../../lib/routes/validators');
 
 const validProductMetadata = {
-  iconURL: 'https://example.com/static/icon.svg',
+  webIconURL: 'https://example.com/static/icon.svg',
   upgradeCTA: 'hello <a href="http://example.org">world</a>',
   downloadURL: 'https://example.com/download',
   appStoreLink: 'https://example.com/appStoreRedirect',
@@ -425,7 +425,7 @@ describe('lib/routes/validators:', () => {
     it('rejects expected keys with invalid values', () => {
       const res = subject.validate(
         Object.assign({}, validProductMetadata, {
-          iconURL: true,
+          webIconURL: true,
         })
       );
       assert.ok(res.error);
@@ -498,7 +498,7 @@ describe('lib/routes/validators:', () => {
       const plan = {
         ...basePlan,
         product_metadata: Object.assign({}, validProductMetadata, {
-          iconURL: true,
+          webIconURL: true,
         }),
       };
       const res = subject.validate(plan);

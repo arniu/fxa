@@ -22,6 +22,7 @@ import { Container } from 'typedi';
 import { ConfigType } from '../../config';
 import error from '../error';
 import Redis from '../redis';
+import { subscriptionProductMetadataValidator } from '../routes/validators';
 import { CurrencyHelper } from './currencies';
 
 const CUSTOMER_RESOURCE = 'customers';
@@ -1049,6 +1050,19 @@ export class StripeHelper {
           `fetchAllPlans - Plan "${item.id}" associated with Deleted Product`,
           item
         );
+        continue;
+      }
+
+      const result = subscriptionProductMetadataValidator.validate(
+        item.product.metadata
+      );
+
+      if (result && result.error) {
+        this.log.error(
+          `fetchAllPlans - Plan "${item.id}"'s metadata failed validation`,
+          { item: item, error: result.error }
+        );
+
         continue;
       }
 

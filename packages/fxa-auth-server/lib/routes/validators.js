@@ -385,26 +385,20 @@ module.exports.subscriptionsSubscriptionListValidator = isA.object({
 // - but we can make a good effort at validating what we expect to see when we see it
 module.exports.subscriptionPlanMetadataValidator = isA.object().unknown(true);
 
+const privacyPattern = /^product:privacyNoticeURL/;
+const privacyDownloadPattern = /^product:privacyNoticeDownloadURL/;
+const tosPattern = /^product:termsOfServiceURL/;
+const tosDownloadPattern = /^product:termsOfServiceDownloadURL/;
 const capabilitiesClientIdPattern = /^capabilities/;
 const legalResourceDomainPattern = /^https:\/\/accounts-static\.cdn\.mozilla\.net\/legal\/(.*)/;
 
 module.exports.subscriptionProductMetadataValidator = isA
   .object({
-    iconURL: isA.string().uri().required(),
+    webIconURL: isA.string().uri().required(),
     upgradeCTA: isA.string().optional(),
     downloadURL: isA.string().uri().required(),
     appStoreLink: isA.string().uri().optional(),
     playStoreLink: isA.string().uri().optional(),
-    'product:privacyNoticeURL': isA.string().uri().required(),
-    'product:termsOfServiceURL': isA.string().uri().required(),
-    'product:termsOfServiceDownloadURL': isA
-      .string()
-      .regex(legalResourceDomainPattern)
-      .required(),
-    'product:privacyNoticeDownloadURL': isA
-      .string()
-      .regex(legalResourceDomainPattern)
-      .required(),
     productSet: isA.string().optional(),
     productOrder: isA.number().optional(),
   })
@@ -412,6 +406,26 @@ module.exports.subscriptionProductMetadataValidator = isA
   .pattern(capabilitiesClientIdPattern, isA.string().required(), {
     fallthrough: true,
   })
+  .pattern(privacyPattern, isA.string().uri().required(), {
+    fallthrough: true,
+  })
+  .pattern(
+    privacyDownloadPattern,
+    isA.string().regex(legalResourceDomainPattern).required(),
+    {
+      fallthrough: true,
+    }
+  )
+  .pattern(tosPattern, isA.string().uri().required(), {
+    fallthrough: true,
+  })
+  .pattern(
+    tosDownloadPattern,
+    isA.string().regex(legalResourceDomainPattern).required(),
+    {
+      fallthrough: true,
+    }
+  )
   .unknown(true);
 
 module.exports.subscriptionsPlanValidator = isA.object({
